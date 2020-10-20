@@ -1,0 +1,28 @@
+[package]
+name = "fork-the-game"
+version = "0.1.0"
+authors = ["Jack Frost <j4qfrost@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+log = "0.4.8"
+image = "0.23"
+num-traits = "0.2"
+legion = "0.3"
+nalgebra   = "0.22"
+ncollide2d = "0.24"
+nphysics2d = "0.17"
+futures = "0.3"
+
+# deno_core = "0.58"
+# deno_fetch = "0.1.0"
+
+rustpython-vm = { git = "https://github.com/j4qfrost/RustPython.git" }
+rustpython-compiler = { git = "https://github.com/j4qfrost/RustPython.git" }
+neovide-plugin = { git = "https://github.com/j4qfrost/neovide-plugin" }
+
+[dependencies.skulpin]
+git = "https://github.com/aclysma/skulpin"
+features = ["skulpin_winit"]
