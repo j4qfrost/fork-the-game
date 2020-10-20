@@ -26,3 +26,7 @@ neovide-plugin = { git = "https://github.com/j4qfrost/neovide-plugin" }
 [dependencies.skulpin]
 git = "https://github.com/aclysma/skulpin"
 features = ["skulpin_winit"]
+
+[build-dependencies]
+walkdir = "2.3.1"
+log = "0.4.8"

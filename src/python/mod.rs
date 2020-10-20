@@ -15,8 +15,8 @@ pub struct Python {
 impl Python {
     pub fn init(&mut self) {
         let mut display_root = PathBuf::new();
-        display_root.push(env!("CARGO_MANIFEST_DIR"));
-        display_root.push("src/fork/python/scripts/hello_world.py");
+        display_root.push(env!("OUT_DIR"));
+        display_root.push("res/scripts/hello_world.py");
         let file_path = display_root.to_str().unwrap();
         let file = File::open(file_path).unwrap();
         let mut buf_reader = BufReader::new(file);

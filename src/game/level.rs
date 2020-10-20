@@ -81,8 +81,8 @@ impl Level {
         }
 
         let mut display_root = PathBuf::new();
-        display_root.push(env!("CARGO_MANIFEST_DIR"));
-        display_root.push("src/fork/res/adventurer-Sheet.png");
+        display_root.push(env!("OUT_DIR"));
+        display_root.push("res/assets/adventurer-Sheet.png");
         let source_path = display_root.to_str().unwrap().to_string();
         let source = character::source(source_path);
         let clip = source.get_clip("idle", 0);

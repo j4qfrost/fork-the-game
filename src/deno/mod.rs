@@ -44,8 +44,8 @@ impl Deno {
         let hello = async move {
             let mut isolate = create_isolate();
             isolate.execute(
-                "scripts/hello_world.js",
-                include_str!("scripts/hello_world.js")
+                "res/scripts/hello_world.js",
+                include_str!("res/scripts/hello_world.js")
                 ).unwrap();
 
             loop {
