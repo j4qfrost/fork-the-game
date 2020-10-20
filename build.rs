@@ -1,7 +1,7 @@
 use std::env;
-use walkdir::WalkDir;
 use std::fs;
 use std::path::PathBuf;
+use walkdir::WalkDir;
 
 fn main() {
     let out_dir = String::from(env::var_os("OUT_DIR").unwrap().to_string_lossy());
@@ -10,8 +10,9 @@ fn main() {
     display_root.push("res/");
     let cargo_mainfest_dir = String::from(display_root.to_string_lossy());
     for entry in WalkDir::new(&cargo_mainfest_dir)
-            .into_iter()
-            .filter_map(|entry| entry.ok()) {
+        .into_iter()
+        .filter_map(|entry| entry.ok())
+    {
         let f_path = entry.path();
         let f_name = String::from(f_path.to_string_lossy());
         let mut out_name = PathBuf::new();

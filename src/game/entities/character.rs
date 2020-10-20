@@ -11,35 +11,39 @@ use std::collections::HashMap;
 
 #[derive(Debug, Copy, Clone)]
 pub enum CharacterState {
-    Idle = 0,
-    RunningLeft = 1,
-    RunningRight = 2,
+    IdleLeft = 0,
+    IdleRight = 1,
+    RunningLeft = 2,
+    RunningRight = 3,
 }
 
 impl FromPrimitive for CharacterState {
     fn from_u32(n: u32) -> Option<Self> {
         match n {
-            0 => Some(Self::Idle),
-            1 => Some(Self::RunningLeft),
-            2 => Some(Self::RunningRight),
+            0 => Some(Self::IdleLeft),
+            1 => Some(Self::IdleRight),
+            2 => Some(Self::RunningLeft),
+            3 => Some(Self::RunningRight),
             _ => None,
         }
     }
 
     fn from_i64(n: i64) -> Option<Self> {
         match n {
-            0 => Some(Self::Idle),
-            1 => Some(Self::RunningLeft),
-            2 => Some(Self::RunningRight),
+            0 => Some(Self::IdleLeft),
+            1 => Some(Self::IdleRight),
+            2 => Some(Self::RunningLeft),
+            3 => Some(Self::RunningRight),
             _ => None,
         }
     }
 
     fn from_u64(n: u64) -> Option<Self> {
         match n {
-            0 => Some(Self::Idle),
-            1 => Some(Self::RunningLeft),
-            2 => Some(Self::RunningRight),
+            0 => Some(Self::IdleLeft),
+            1 => Some(Self::IdleRight),
+            2 => Some(Self::RunningLeft),
+            3 => Some(Self::RunningRight),
             _ => None,
         }
     }
@@ -90,7 +94,11 @@ struct CharacterDesc {
 
 pub fn draw(canvas: &mut Canvas, isometry: &Isometry<f32>, source: &SpriteSheet, anim: &Animate) {
     let clip = match anim.state() {
-        CharacterState::Idle => (
+        CharacterState::IdleLeft => (
+            source.get_clip("idle", anim.ticks),
+            ClipOrientation::Flipped,
+        ),
+        CharacterState::IdleRight => (
             source.get_clip("idle", anim.ticks),
             ClipOrientation::Original,
         ),
@@ -135,7 +143,10 @@ pub fn delta(state: u32, input: u32) -> u32 {
     match (state, input) {
         (_, CharacterInput::Left) => CharacterState::RunningLeft as u32,
         (_, CharacterInput::Right) => CharacterState::RunningRight as u32,
-        (_, CharacterInput::Interrupt) => CharacterState::Idle as u32,
+        (CharacterState::RunningLeft, CharacterInput::Interrupt) => CharacterState::IdleLeft as u32,
+        (CharacterState::RunningRight, CharacterInput::Interrupt) => {
+            CharacterState::IdleRight as u32
+        }
     }
 }
 
@@ -147,7 +158,9 @@ pub fn animate(
     let speed = 2.0;
     let body = bodies.rigid_body_mut(*body_handle).unwrap();
     let (num_states, velocity) = match anim.state() {
-        CharacterState::Idle => (4, Velocity::<f32>::linear(0.0, 0.0)),
+        CharacterState::IdleLeft | CharacterState::IdleRight => {
+            (4, Velocity::<f32>::linear(0.0, 0.0))
+        }
         CharacterState::RunningLeft => (6, Velocity::<f32>::linear(-speed, 0.0)),
         CharacterState::RunningRight => (6, Velocity::<f32>::linear(speed, 0.0)),
     };

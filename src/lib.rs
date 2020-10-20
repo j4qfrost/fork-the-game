@@ -1,5 +1,5 @@
-use neovide_plugin::*;
 use log::error;
+use neovide_plugin::*;
 
 use skulpin::winit::event::{
     ElementState, ModifiersState, MouseButton, MouseScrollDelta, WindowEvent,
@@ -74,7 +74,10 @@ impl NeovideEventProcessor for Fork {
 }
 
 impl WindowHandle for Fork {
-    fn init() -> Self where Self: Sized {
+    fn init() -> Self
+    where
+        Self: Sized,
+    {
         Fork::default()
     }
 
