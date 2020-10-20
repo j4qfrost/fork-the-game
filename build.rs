@@ -19,10 +19,12 @@ fn main() {
         out_name.push(&out_dir);
         out_name.push("res/");
         out_name.push(&f_name.strip_prefix(&cargo_mainfest_dir).unwrap());
-        if f_path.is_file() {
-            fs::copy(f_name, out_name).unwrap();
-        } else {
-            fs::create_dir(out_name).unwrap();
+        if !out_name.exists() {
+            if f_path.is_file() {
+                fs::copy(f_name, out_name).unwrap();
+            } else {
+                fs::create_dir(out_name).unwrap();
+            }   
         }
     }
 }

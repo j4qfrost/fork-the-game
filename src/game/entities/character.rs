@@ -147,6 +147,8 @@ pub fn delta(state: u32, input: u32) -> u32 {
         (CharacterState::RunningRight, CharacterInput::Interrupt) => {
             CharacterState::IdleRight as u32
         }
+        (CharacterState::IdleLeft, CharacterInput::Interrupt) => CharacterState::IdleLeft as u32,
+        (CharacterState::IdleRight, CharacterInput::Interrupt) => CharacterState::IdleRight as u32,
     }
 }
 
