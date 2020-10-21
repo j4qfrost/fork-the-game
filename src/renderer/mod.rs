@@ -1,4 +1,5 @@
 use super::game::components::animate::Animate;
+use super::game::components::primitive::Primitive;
 use super::game::components::sprite::Sprite;
 use super::game::*;
 use legion::IntoQuery;
@@ -62,6 +63,14 @@ impl Renderer {
             let body = body_set.rigid_body(*handle).unwrap();
             (sprite.draw_fn)(canvas, body.position(), &sprite.source, &animate);
         }
+
+        let mut query = <(&DefaultBodyHandle, &Primitive)>::query();
+        for (handle, primative) in query.iter(&game.world) {
+            let body_set = game.resources.get::<DefaultBodySet<f32>>().unwrap();
+            let body = body_set.rigid_body(*handle).unwrap();
+            (primative.draw_fn)(canvas, body.position());
+        }
+
         canvas.draw_rect(
             Rect {
                 left: -GROUND_HALF_EXTENTS_WIDTH,

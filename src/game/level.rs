@@ -1,6 +1,8 @@
 use super::components::animate::Animate;
 use super::components::input::KeyInputHandler;
+use super::components::primitive::Primitive;
 use super::components::sprite::Sprite;
+use super::entities::ball;
 use super::entities::character;
 use legion::{Resources, World};
 use nalgebra::Vector2;
@@ -77,6 +79,8 @@ impl Level {
 
                 // Insert the collider to the body set.
                 colliders.insert(ball_collider);
+                let primitive = Primitive::new(ball::draw);
+                world.push((rigid_body_handle, primitive));
             }
         }
 

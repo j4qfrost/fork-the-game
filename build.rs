@@ -24,7 +24,7 @@ fn main() {
                 fs::copy(f_name, out_name).unwrap();
             } else {
                 fs::create_dir(out_name).unwrap();
-            }   
+            }
         }
     }
 }
