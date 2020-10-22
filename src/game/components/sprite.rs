@@ -1,6 +1,7 @@
 use super::animate::Animate;
 use image::{DynamicImage, GenericImageView, Rgba};
 use nphysics2d::math::Isometry;
+use num_traits::AsPrimitive;
 use skulpin::skia_safe::{
     AlphaType, Canvas, ColorInfo, ColorSpace, ColorType, Data, IRect, ISize, Image, ImageInfo,
 };
@@ -20,30 +21,25 @@ impl Sprite {
 }
 
 pub struct SpriteSheet {
-    clips: HashMap<String, Vec<Clip>>,
+    clips: HashMap<u32, Vec<Clip>>,
 }
 
 impl SpriteSheet {
-    pub fn new(clips: HashMap<String, Vec<Clip>>) -> Self {
+    pub fn new(clips: HashMap<u32, Vec<Clip>>) -> Self {
         Self { clips }
     }
 }
 
 impl SpriteSheet {
     #[inline]
-    pub fn get_clip(&self, key: &str, it: usize) -> &Clip {
-        &self.clips.get(key).unwrap()[it]
+    pub fn get_clip<T: AsPrimitive<u32>>(&self, key: T, it: usize) -> &Clip {
+        &self.clips.get(&(key.as_())).unwrap()[it]
     }
-
-    // pub fn get_image(&self, key: &str, it: usize, orientation: ClipOrientation) -> &DynamicImage {
-    //     self.get_clip(key, it).get(orientation)
-    // }
 }
 
 #[derive(Clone)]
 pub struct Clip {
-    original: DynamicImage,
-    flipped: Option<DynamicImage>,
+    pub image: DynamicImage,
     pub width_over_height: f32,
 }
 
@@ -56,28 +52,19 @@ impl Clip {
             rect.height() as u32,
         );
 
+        if is_flipped {
+            cropped = cropped.fliph();
+        }
+
         if squeeze {
             Clip::squeeze(&mut cropped);
         }
 
-        let original = cropped.flipv();
-        let flipped = if is_flipped {
-            Some(original.fliph())
-        } else {
-            None
-        };
-        let width_over_height = original.width() as f32 / original.height() as f32;
+        let image = cropped.flipv();
+        let width_over_height = image.width() as f32 / image.height() as f32;
         Self {
-            original,
-            flipped,
+            image,
             width_over_height,
-        }
-    }
-
-    pub fn get(&self, orientation: ClipOrientation) -> &DynamicImage {
-        match orientation {
-            ClipOrientation::Original => &self.original,
-            ClipOrientation::Flipped => self.flipped.as_ref().unwrap(),
         }
     }
 
@@ -93,11 +80,6 @@ impl Clip {
             *source = source.rotate90();
         }
     }
-}
-
-pub enum ClipOrientation {
-    Original,
-    Flipped,
 }
 
 pub fn make_skia_image(img: &DynamicImage) -> Image {

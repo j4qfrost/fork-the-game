@@ -57,16 +57,15 @@ impl Renderer {
         paint.set_style(paint::Style::Stroke);
         paint.set_stroke_width(0.02);
 
+        let body_set = game.resources.get::<DefaultBodySet<f32>>().unwrap();
         let mut query = <(&DefaultBodyHandle, &Animate, &Sprite)>::query();
         for (handle, animate, sprite) in query.iter(&game.world) {
-            let body_set = game.resources.get::<DefaultBodySet<f32>>().unwrap();
             let body = body_set.rigid_body(*handle).unwrap();
             (sprite.draw_fn)(canvas, body.position(), &sprite.source, &animate);
         }
 
         let mut query = <(&DefaultBodyHandle, &Primitive)>::query();
         for (handle, primative) in query.iter(&game.world) {
-            let body_set = game.resources.get::<DefaultBodySet<f32>>().unwrap();
             let body = body_set.rigid_body(*handle).unwrap();
             (primative.draw_fn)(canvas, body.position());
         }

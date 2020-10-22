@@ -61,7 +61,7 @@ impl Level {
         let centery = shift / 2.0;
         let height = 3.0;
 
-        for i in 0usize..BALL_COUNT {
+        for i in 4usize..BALL_COUNT {
             for j in 0usize..BALL_COUNT {
                 let x = i as f32 * shift - centerx;
                 let y = j as f32 * shift + centery + height;
@@ -89,7 +89,7 @@ impl Level {
         display_root.push("res/assets/adventurer-Sheet.png");
         let source_path = display_root.to_str().unwrap().to_string();
         let source = character::source(source_path);
-        let clip = source.get_clip("idle", 0);
+        let clip = source.get_clip(character::CharacterState::IdleLeft, 0);
         let ratio = clip.width_over_height;
         let sprite = Sprite::new(character::draw, source);
         let animate = Animate::new(0, character::delta, character::animate);
@@ -99,7 +99,7 @@ impl Level {
         // Insert the rigid body to the body set.
         let rigid_body_handle = bodies.insert(rigid_body);
 
-        let box_shape_handle = ShapeHandle::new(Cuboid::new(Vector2::new(ratio, 0.5)));
+        let box_shape_handle = ShapeHandle::new(Cuboid::new(Vector2::new(ratio / 2.0, 0.5)));
 
         // Build the collider.
         let box_collider = ColliderDesc::new(box_shape_handle)

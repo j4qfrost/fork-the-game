@@ -3,13 +3,13 @@ use super::super::components::sprite::*;
 use image::GenericImageView;
 use nphysics2d::math::{Isometry, Velocity};
 use nphysics2d::object::{DefaultBodyHandle, DefaultBodySet};
-use num_traits::FromPrimitive;
+use num_traits::{AsPrimitive, FromPrimitive};
 use skulpin::skia_safe::{colors, Canvas, IRect, Paint, Rect};
 use skulpin::winit::event::ElementState;
 use skulpin::winit::event::VirtualKeyCode as Keycode;
 use std::collections::HashMap;
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
 pub enum CharacterState {
     IdleLeft = 0,
     IdleRight = 1,
@@ -46,6 +46,12 @@ impl FromPrimitive for CharacterState {
             3 => Some(Self::RunningRight),
             _ => None,
         }
+    }
+}
+
+impl AsPrimitive<u32> for CharacterState {
+    fn as_(self) -> u32 {
+        self as u32
     }
 }
 
@@ -93,31 +99,14 @@ struct CharacterDesc {
 */
 
 pub fn draw(canvas: &mut Canvas, isometry: &Isometry<f32>, source: &SpriteSheet, anim: &Animate) {
-    let clip = match anim.state() {
-        CharacterState::IdleLeft => (
-            source.get_clip("idle", anim.ticks),
-            ClipOrientation::Flipped,
-        ),
-        CharacterState::IdleRight => (
-            source.get_clip("idle", anim.ticks),
-            ClipOrientation::Original,
-        ),
-        CharacterState::RunningLeft => (
-            source.get_clip("running", anim.ticks),
-            ClipOrientation::Flipped,
-        ),
-        CharacterState::RunningRight => (
-            source.get_clip("running", anim.ticks),
-            ClipOrientation::Original,
-        ),
-    };
-    let dyn_image = clip.0.get(clip.1);
+    let state: CharacterState = anim.state();
+    let clip = source.get_clip(state, anim.ticks);
 
-    let img = make_skia_image(dyn_image);
+    let img = make_skia_image(&clip.image);
 
     let position = isometry.translation;
     let paint = Paint::new(colors::RED, None);
-    let ratio = clip.0.width_over_height;
+    let ratio = clip.width_over_height;
 
     let rect = Rect::from_xywh(position.x - ratio / 2.0, position.y - 0.5, ratio, 1.0);
 
@@ -199,7 +188,29 @@ pub fn source(source_path: String) -> SpriteSheet {
             true,
         ),
     ];
-    clips.insert("idle".to_string(), idle_clips);
+    clips.insert(CharacterState::IdleLeft as u32, idle_clips);
+    let idle_clips = vec![
+        Clip::new(&img, &IRect::from_xywh(0, 0, clip_w, clip_h), false, true),
+        Clip::new(
+            &img,
+            &IRect::from_xywh(clip_w, 0, clip_w, clip_h),
+            false,
+            true,
+        ),
+        Clip::new(
+            &img,
+            &IRect::from_xywh(clip_w * 2, 0, clip_w, clip_h),
+            false,
+            true,
+        ),
+        Clip::new(
+            &img,
+            &IRect::from_xywh(clip_w * 3, 0, clip_w, clip_h),
+            false,
+            true,
+        ),
+    ];
+    clips.insert(CharacterState::IdleRight as u32, idle_clips);
 
     // Crouch
     // let crouch_clips = vec![
@@ -249,7 +260,46 @@ pub fn source(source_path: String) -> SpriteSheet {
             true,
         ),
     ];
-    clips.insert("running".to_string(), running_clips);
+    clips.insert(CharacterState::RunningLeft as u32, running_clips);
+    let running_clips = vec![
+        Clip::new(
+            &img,
+            &IRect::from_xywh(clip_w, clip_h, clip_w, clip_h),
+            false,
+            true,
+        ),
+        Clip::new(
+            &img,
+            &IRect::from_xywh(clip_w * 2, clip_h, clip_w, clip_h),
+            false,
+            true,
+        ),
+        Clip::new(
+            &img,
+            &IRect::from_xywh(clip_w * 3, clip_h, clip_w, clip_h),
+            false,
+            true,
+        ),
+        Clip::new(
+            &img,
+            &IRect::from_xywh(clip_w * 4, clip_h, clip_w, clip_h),
+            false,
+            true,
+        ),
+        Clip::new(
+            &img,
+            &IRect::from_xywh(clip_w * 5, clip_h, clip_w, clip_h),
+            false,
+            true,
+        ),
+        Clip::new(
+            &img,
+            &IRect::from_xywh(clip_w * 6, clip_h, clip_w, clip_h),
+            false,
+            true,
+        ),
+    ];
+    clips.insert(CharacterState::RunningRight as u32, running_clips);
 
     SpriteSheet::new(clips)
 }

@@ -42,3 +42,14 @@ pub fn physics(
         physics.step(bodies, colliders);
     }
 }
+
+// #[system(for_each)]
+// pub fn morph_colliders(
+//     anim: &Animate,
+//     sprite: &Sprite,
+//     morpher: &Morpher,
+//     body_handle: &DefaultBodyHandle,
+//     #[resource] colliders: &mut DefaultColliderSet<f32>,
+// ) {
+
+// }
