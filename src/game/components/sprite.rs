@@ -3,7 +3,7 @@ use image::{DynamicImage, GenericImageView, Rgba};
 use nphysics2d::math::Isometry;
 use num_traits::AsPrimitive;
 use skulpin::skia_safe::{
-    AlphaType, Canvas, ColorInfo, ColorSpace, ColorType, Data, IRect, ISize, Image, ImageInfo,
+    AlphaType, Canvas, ColorInfo, ColorSpace, ColorType, Data, ISize, Image, ImageInfo,
 };
 use std::collections::HashMap;
 
@@ -28,14 +28,82 @@ impl SpriteSheet {
     pub fn new(clips: HashMap<u32, Vec<Clip>>) -> Self {
         Self { clips }
     }
-}
 
-impl SpriteSheet {
+    pub fn from_config(filename: &str) -> Self {
+        let f = File::open(filename).expect("Failed opening file");
+        let desc: SpriteSheetDesc = match from_reader(f) {
+            Ok(x) => x,
+            Err(e) => {
+                println!("Failed to load config: {}", e);
+
+                std::process::exit(1);
+            }
+        };
+
+        println!("Config: {:?}", &desc);
+        let img = image::open(desc.source_path).unwrap();
+
+        let mut clip_map = HashMap::new();
+        for (key, clip_descs) in desc.clip_map {
+            let mut clips = Vec::new();
+            for cd in clip_descs {
+                let clip = Clip::new(&img, cd.rect, cd.is_flipped, cd.squeeze);
+                clips.push(clip);
+            }
+            clip_map.insert(key, clips);
+        }
+
+        Self {
+            clips: clip_map,
+        }
+    }
+
     #[inline]
     pub fn get_clip<T: AsPrimitive<u32>>(&self, key: T, it: usize) -> &Clip {
         &self.clips.get(&(key.as_())).unwrap()[it]
     }
 }
+
+ 
+use ron::de::from_reader;
+use serde::Deserialize;
+use std::fs::File;
+
+#[derive(Debug, Deserialize)]
+struct SpriteSheetDesc {
+    source_path: String,
+    clip_map: HashMap<u32, Vec<ClipDesc>>,
+}
+
+#[derive(Debug, Deserialize)]
+struct ClipDesc {
+    rect: Rect,
+    is_flipped: bool,
+    squeeze: bool,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Rect {
+    pub x: u32,
+    pub y: u32,
+    pub w: u32,
+    pub h: u32,
+}
+
+// fn main() {
+//     let input_path = format!("{}/example.ron", env!("OUT_DIR"));
+//     let f = File::open(&input_path).expect("Failed opening file");
+//     let config: Config = match from_reader(f) {
+//         Ok(x) => x,
+//         Err(e) => {
+//             println!("Failed to load config: {}", e);
+
+//             std::process::exit(1);
+//         }
+//     };
+
+//     println!("Config: {:?}", &config);
+// }
 
 #[derive(Clone)]
 pub struct Clip {
@@ -44,12 +112,12 @@ pub struct Clip {
 }
 
 impl Clip {
-    pub fn new(source: &DynamicImage, rect: &IRect, is_flipped: bool, squeeze: bool) -> Self {
+    pub fn new(source: &DynamicImage, rect: Rect, is_flipped: bool, squeeze: bool) -> Self {
         let mut cropped = source.crop_imm(
-            rect.x() as u32,
-            rect.y() as u32,
-            rect.width() as u32,
-            rect.height() as u32,
+            rect.x,
+            rect.y,
+            rect.w,
+            rect.h,
         );
 
         if is_flipped {

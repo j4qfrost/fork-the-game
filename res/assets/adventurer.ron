@@ -1,0 +1,8 @@
+SpriteSheetDesc(
+    source_path: "adventurer-Sheet.png"
+    clip_map: {
+        0: [
+            ClipDesc(rect: Rect(x: 0, y: 0, w: 50, h: 50), is_flipped: true, squeeze: true),
+        ],
+    }
+)

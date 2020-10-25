@@ -4,7 +4,7 @@ use image::GenericImageView;
 use nphysics2d::math::{Isometry, Velocity};
 use nphysics2d::object::{DefaultBodyHandle, DefaultBodySet};
 use num_traits::{AsPrimitive, FromPrimitive};
-use skulpin::skia_safe::{colors, Canvas, IRect, Paint, Rect};
+use skulpin::skia_safe::{colors, Canvas, Paint, Rect as SkiaRect};
 use skulpin::winit::event::ElementState;
 use skulpin::winit::event::VirtualKeyCode as Keycode;
 use std::collections::HashMap;
@@ -108,7 +108,7 @@ pub fn draw(canvas: &mut Canvas, isometry: &Isometry<f32>, source: &SpriteSheet,
     let paint = Paint::new(colors::RED, None);
     let ratio = clip.width_over_height;
 
-    let rect = Rect::from_xywh(position.x - ratio / 2.0, position.y - 0.5, ratio, 1.0);
+    let rect = SkiaRect::from_xywh(position.x - ratio / 2.0, position.y - 0.5, ratio, 1.0);
 
     #[cfg(feature = "bounds")]
     {
@@ -162,50 +162,50 @@ pub fn animate(
 pub fn source(source_path: String) -> SpriteSheet {
     let img = image::open(source_path).unwrap();
     let (w, h) = img.dimensions();
-    let clip_w = w as i32 / 7;
-    let clip_h = h as i32 / 11;
+    let w = w / 7;
+    let h = h / 11;
 
     let mut clips = HashMap::new();
     // Idle
     let idle_clips = vec![
-        Clip::new(&img, &IRect::from_xywh(0, 0, clip_w, clip_h), true, true),
+        Clip::new(&img, Rect{x: 0, y: 0, w, h}, true, true),
         Clip::new(
             &img,
-            &IRect::from_xywh(clip_w, 0, clip_w, clip_h),
+            Rect{x: w, y: 0, w, h},
             true,
             true,
         ),
         Clip::new(
             &img,
-            &IRect::from_xywh(clip_w * 2, 0, clip_w, clip_h),
+            Rect{x: w * 2, y: 0, w, h},
             true,
             true,
         ),
         Clip::new(
             &img,
-            &IRect::from_xywh(clip_w * 3, 0, clip_w, clip_h),
+            Rect{x: w * 3, y: 0, w, h},
             true,
             true,
         ),
     ];
     clips.insert(CharacterState::IdleLeft as u32, idle_clips);
     let idle_clips = vec![
-        Clip::new(&img, &IRect::from_xywh(0, 0, clip_w, clip_h), false, true),
+        Clip::new(&img, Rect{x: 0, y: 0, w, h}, false, true),
         Clip::new(
             &img,
-            &IRect::from_xywh(clip_w, 0, clip_w, clip_h),
+            Rect{x: w, y: 0, w, h},
             false,
             true,
         ),
         Clip::new(
             &img,
-            &IRect::from_xywh(clip_w * 2, 0, clip_w, clip_h),
+            Rect{x: w * 2, y: 0, w, h},
             false,
             true,
         ),
         Clip::new(
             &img,
-            &IRect::from_xywh(clip_w * 3, 0, clip_w, clip_h),
+            Rect{x: w * 3, y: 0, w, h},
             false,
             true,
         ),
@@ -214,10 +214,10 @@ pub fn source(source_path: String) -> SpriteSheet {
 
     // Crouch
     // let crouch_clips = vec![
-    //     Clip::new(&img, &IRect::from_xywh(clip_w * 4, 0, clip_w, clip_h), true),
-    //     Clip::new(&img, &IRect::from_xywh(clip_w * 5, 0, clip_w, clip_h), true),
-    //     Clip::new(&img, &IRect::from_xywh(clip_w * 6, 0, clip_w, clip_h), true),
-    //     Clip::new(&img, &IRect::from_xywh(0, clip_h, clip_w, clip_h), true),
+    //     Clip::new(&img, (clip_w * 4, 0, clip_w, clip_h), true),
+    //     Clip::new(&img, (clip_w * 5, 0, clip_w, clip_h), true),
+    //     Clip::new(&img, (clip_w * 6, 0, clip_w, clip_h), true),
+    //     Clip::new(&img, (0, clip_h, clip_w, clip_h), true),
     // ];
     // clips.insert("crouch".to_string(), crouch_clips);
 
@@ -225,37 +225,37 @@ pub fn source(source_path: String) -> SpriteSheet {
     let running_clips = vec![
         Clip::new(
             &img,
-            &IRect::from_xywh(clip_w, clip_h, clip_w, clip_h),
+            Rect{x: w, y: h, w, h},
             true,
             true,
         ),
         Clip::new(
             &img,
-            &IRect::from_xywh(clip_w * 2, clip_h, clip_w, clip_h),
+            Rect{x: w * 2, y: h, w, h},
             true,
             true,
         ),
         Clip::new(
             &img,
-            &IRect::from_xywh(clip_w * 3, clip_h, clip_w, clip_h),
+            Rect{x: w * 3, y: h, w, h},
             true,
             true,
         ),
         Clip::new(
             &img,
-            &IRect::from_xywh(clip_w * 4, clip_h, clip_w, clip_h),
+            Rect{x: w * 4, y: h, w, h},
             true,
             true,
         ),
         Clip::new(
             &img,
-            &IRect::from_xywh(clip_w * 5, clip_h, clip_w, clip_h),
+            Rect{x: w * 5, y: h, w, h},
             true,
             true,
         ),
         Clip::new(
             &img,
-            &IRect::from_xywh(clip_w * 6, clip_h, clip_w, clip_h),
+            Rect{x: w * 6, y: h, w, h},
             true,
             true,
         ),
@@ -264,37 +264,37 @@ pub fn source(source_path: String) -> SpriteSheet {
     let running_clips = vec![
         Clip::new(
             &img,
-            &IRect::from_xywh(clip_w, clip_h, clip_w, clip_h),
+            Rect{x: w, y: h, w, h},
             false,
             true,
         ),
         Clip::new(
             &img,
-            &IRect::from_xywh(clip_w * 2, clip_h, clip_w, clip_h),
+            Rect{x: w * 2, y: h, w, h},
             false,
             true,
         ),
         Clip::new(
             &img,
-            &IRect::from_xywh(clip_w * 3, clip_h, clip_w, clip_h),
+            Rect{x: w * 3, y: h, w, h},
             false,
             true,
         ),
         Clip::new(
             &img,
-            &IRect::from_xywh(clip_w * 4, clip_h, clip_w, clip_h),
+            Rect{x: w * 4, y: h, w, h},
             false,
             true,
         ),
         Clip::new(
             &img,
-            &IRect::from_xywh(clip_w * 5, clip_h, clip_w, clip_h),
+            Rect{x: w * 5, y: h, w, h},
             false,
             true,
         ),
         Clip::new(
             &img,
-            &IRect::from_xywh(clip_w * 6, clip_h, clip_w, clip_h),
+            Rect{x: w * 6, y: h, w, h},
             false,
             true,
         ),
