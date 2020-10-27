@@ -40,12 +40,8 @@ impl SpriteSheet {
             }
         };
 
-        println!("Config: {:?}", &desc);
-    use std::path::PathBuf;
-                    let mut display_root = PathBuf::new();
-        display_root.push(env!("OUT_DIR"));
-        display_root.push(desc.source_path);
-        let img = image::open(&display_root.to_str().unwrap().to_string()).unwrap();
+        let source_path = crate::utils::from_out_dir(&desc.source_path);
+        let img = image::open(&source_path).unwrap();
 
         let mut clip_map = HashMap::new();
         for (key, clip_descs) in desc.clip_map {
@@ -57,9 +53,7 @@ impl SpriteSheet {
             clip_map.insert(key, clips);
         }
 
-        Self {
-            clips: clip_map,
-        }
+        Self { clips: clip_map }
     }
 
     #[inline]
@@ -68,7 +62,6 @@ impl SpriteSheet {
     }
 }
 
- 
 use ron::de::from_reader;
 use serde::Deserialize;
 use std::fs::File;
@@ -94,21 +87,6 @@ pub struct Rect {
     pub h: u32,
 }
 
-// fn main() {
-//     let input_path = format!("{}/example.ron", env!("OUT_DIR"));
-//     let f = File::open(&input_path).expect("Failed opening file");
-//     let config: Config = match from_reader(f) {
-//         Ok(x) => x,
-//         Err(e) => {
-//             println!("Failed to load config: {}", e);
-
-//             std::process::exit(1);
-//         }
-//     };
-
-//     println!("Config: {:?}", &config);
-// }
-
 #[derive(Clone)]
 pub struct Clip {
     pub image: DynamicImage,
@@ -117,12 +95,7 @@ pub struct Clip {
 
 impl Clip {
     pub fn new(source: &DynamicImage, rect: Rect, is_flipped: bool, squeeze: bool) -> Self {
-        let mut cropped = source.crop_imm(
-            rect.x,
-            rect.y,
-            rect.w,
-            rect.h,
-        );
+        let mut cropped = source.crop_imm(rect.x, rect.y, rect.w, rect.h);
 
         if is_flipped {
             cropped = cropped.fliph();

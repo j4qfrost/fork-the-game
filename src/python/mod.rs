@@ -14,18 +14,15 @@ pub struct Python {
 
 impl Python {
     pub fn init(&mut self) {
-        let mut display_root = PathBuf::new();
-        display_root.push(env!("OUT_DIR"));
-        display_root.push("res/scripts/hello_world.py");
-        let file_path = display_root.to_str().unwrap();
-        let file = File::open(file_path).unwrap();
+        let script_path = crate::utils::from_out_dir("res/scripts/hello_world.py");
+        let file = File::open(&script_path).unwrap();
         let mut buf_reader = BufReader::new(file);
         let mut contents = String::new();
         buf_reader.read_to_string(&mut contents).unwrap();
 
         let hello = self
             .runtime
-            .enter(|vm| vm.compile(&contents, Mode::Exec, file_path.to_string()))
+            .enter(|vm| vm.compile(&contents, Mode::Exec, script_path))
             .unwrap();
 
         self.runtime

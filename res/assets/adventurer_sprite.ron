@@ -1,0 +1,33 @@
+SpriteSheetDesc(
+    source_path: "res/assets/adventurer-Sheet.png",
+    clip_map: {
+        0: [
+            ClipDesc(rect: Rect(x: 0, y: 0, w: 50, h: 37), is_flipped: true, squeeze: true),
+            ClipDesc(rect: Rect(x: 50, y: 0, w: 50, h: 37), is_flipped: true, squeeze: true),
+            ClipDesc(rect: Rect(x: 100, y: 0, w: 50, h: 37), is_flipped: true, squeeze: true),
+            ClipDesc(rect: Rect(x: 150, y: 0, w: 50, h: 37), is_flipped: true, squeeze: true),
+        ],
+        1: [
+            ClipDesc(rect: Rect(x: 0, y: 0, w: 50, h: 37), is_flipped: false, squeeze: true),
+            ClipDesc(rect: Rect(x: 50, y: 0, w: 50, h: 37), is_flipped: false, squeeze: true),
+            ClipDesc(rect: Rect(x: 100, y: 0, w: 50, h: 37), is_flipped: false, squeeze: true),
+            ClipDesc(rect: Rect(x: 150, y: 0, w: 50, h: 37), is_flipped: false, squeeze: true),
+        ],
+        2: [
+            ClipDesc(rect: Rect(x: 50, y: 37, w: 50, h: 37), is_flipped: true, squeeze: true),
+            ClipDesc(rect: Rect(x: 100, y: 37, w: 50, h: 37), is_flipped: true, squeeze: true),
+            ClipDesc(rect: Rect(x: 150, y: 37, w: 50, h: 37), is_flipped: true, squeeze: true),
+            ClipDesc(rect: Rect(x: 200, y: 37, w: 50, h: 37), is_flipped: true, squeeze: true),
+            ClipDesc(rect: Rect(x: 250, y: 37, w: 50, h: 37), is_flipped: true, squeeze: true),
+            ClipDesc(rect: Rect(x: 300, y: 37, w: 50, h: 37), is_flipped: true, squeeze: true),
+        ],
+        3: [
+            ClipDesc(rect: Rect(x: 50, y: 37, w: 50, h: 37), is_flipped: false, squeeze: true),
+            ClipDesc(rect: Rect(x: 100, y: 37, w: 50, h: 37), is_flipped: false, squeeze: true),
+            ClipDesc(rect: Rect(x: 150, y: 37, w: 50, h: 37), is_flipped: false, squeeze: true),
+            ClipDesc(rect: Rect(x: 200, y: 37, w: 50, h: 37), is_flipped: false, squeeze: true),
+            ClipDesc(rect: Rect(x: 250, y: 37, w: 50, h: 37), is_flipped: false, squeeze: true),
+            ClipDesc(rect: Rect(x: 300, y: 37, w: 50, h: 37), is_flipped: false, squeeze: true),
+        ],
+    },
+)

@@ -10,7 +10,6 @@ use ncollide2d::shape::{Ball, Cuboid, ShapeHandle};
 use nphysics2d::object::{
     BodyPartHandle, ColliderDesc, DefaultBodySet, DefaultColliderSet, Ground, RigidBodyDesc,
 };
-use std::path::PathBuf;
 
 pub struct Level {
     name: String,
@@ -84,11 +83,7 @@ impl Level {
             }
         }
 
-        let mut display_root = PathBuf::new();
-        display_root.push(env!("OUT_DIR"));
-        display_root.push("res/assets/adventurer-Sheet.png");
-        let source_path = display_root.to_str().unwrap().to_string();
-        let source = character::source(source_path);
+        let source = character::source();
         let clip = source.get_clip(character::CharacterState::IdleLeft, 0);
         let ratio = clip.width_over_height;
         let sprite = Sprite::new(character::draw, source);
