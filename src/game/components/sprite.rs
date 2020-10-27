@@ -41,7 +41,11 @@ impl SpriteSheet {
         };
 
         println!("Config: {:?}", &desc);
-        let img = image::open(desc.source_path).unwrap();
+    use std::path::PathBuf;
+                    let mut display_root = PathBuf::new();
+        display_root.push(env!("OUT_DIR"));
+        display_root.push(desc.source_path);
+        let img = image::open(&display_root.to_str().unwrap().to_string()).unwrap();
 
         let mut clip_map = HashMap::new();
         for (key, clip_descs) in desc.clip_map {

@@ -160,6 +160,11 @@ pub fn animate(
 }
 
 pub fn source(source_path: String) -> SpriteSheet {
+    use std::path::PathBuf;
+            let mut display_root = PathBuf::new();
+        display_root.push(env!("OUT_DIR"));
+        display_root.push("res/assets/adventurer.ron");
+    SpriteSheet::from_config(&display_root.to_str().unwrap().to_string());
     let img = image::open(source_path).unwrap();
     let (w, h) = img.dimensions();
     let w = w / 7;
