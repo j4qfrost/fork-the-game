@@ -1,6 +1,7 @@
 use super::components::animate::Animate;
 use super::Physics;
 use legion::system;
+use ncollide2d::query::Proximity;
 use nphysics2d::object::{DefaultBodyHandle, DefaultBodySet, DefaultColliderSet};
 use std::time::{Duration, Instant};
 
@@ -40,6 +41,19 @@ pub fn physics(
 ) {
     for _ in 1..physics.nsteps {
         physics.step(bodies, colliders);
+    }
+
+    for prox in physics.geometrical_world.proximity_events() {
+        let c1 = colliders.get(prox.collider1).unwrap();
+        let c2 = colliders.get(prox.collider2).unwrap();
+        let body1 = c1.body();
+        let body2 = c2.body();
+        println!("oof");
+        println!("{:?}", prox.new_status);
+
+        if prox.new_status == Proximity::Intersecting {
+            println!("oof");
+        }
     }
 }
 

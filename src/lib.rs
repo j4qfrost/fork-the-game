@@ -13,7 +13,7 @@ use renderer::*;
 pub mod game;
 use game::*;
 // pub mod deno;
-pub mod python;
+// pub mod python;
 mod utils;
 
 #[derive(Default)]

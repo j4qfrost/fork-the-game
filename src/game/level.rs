@@ -8,7 +8,8 @@ use legion::{Resources, World};
 use nalgebra::Vector2;
 use ncollide2d::shape::{Ball, Cuboid, ShapeHandle};
 use nphysics2d::object::{
-    BodyPartHandle, ColliderDesc, DefaultBodySet, DefaultColliderSet, Ground, RigidBodyDesc,
+    BodyPartHandle, BodyStatus, ColliderDesc, DefaultBodySet, DefaultColliderSet, Ground,
+    RigidBodyDesc,
 };
 
 pub struct Level {
@@ -55,33 +56,31 @@ impl Level {
 
         let ball_shape_handle = ShapeHandle::new(Ball::new(BALL_RADIUS));
 
-        let shift = (BALL_RADIUS + ColliderDesc::<f32>::default_margin()) * 2.0;
+        let shift = BALL_RADIUS + ColliderDesc::<f32>::default_margin();
         let centerx = shift * (BALL_COUNT as f32) / 2.0;
-        let centery = shift / 2.0;
-        let height = 3.0;
 
-        for i in 4usize..BALL_COUNT {
-            for j in 0usize..BALL_COUNT {
-                let x = i as f32 * shift - centerx;
-                let y = j as f32 * shift + centery + height;
+        let x = shift - centerx;
+        let y = shift;
 
-                // Build the rigid body.
-                let rigid_body = RigidBodyDesc::new().translation(Vector2::new(x, y)).build();
+        // Build the rigid body.
+        let rigid_body = RigidBodyDesc::new()
+            .translation(Vector2::new(x, y))
+            .status(BodyStatus::Static)
+            .build();
 
-                // Insert the rigid body to the body set.
-                let rigid_body_handle = bodies.insert(rigid_body);
+        // Insert the rigid body to the body set.
+        let rigid_body_handle = bodies.insert(rigid_body);
 
-                // Build the collider.
-                let ball_collider = ColliderDesc::new(ball_shape_handle.clone())
-                    .density(1.0)
-                    .build(BodyPartHandle(rigid_body_handle, 0));
+        // Build the collider.
+        let ball_collider = ColliderDesc::new(ball_shape_handle.clone())
+            .density(1.0)
+            .sensor(true)
+            .build(BodyPartHandle(rigid_body_handle, 0));
 
-                // Insert the collider to the body set.
-                colliders.insert(ball_collider);
-                let primitive = Primitive::new(ball::draw);
-                world.push((rigid_body_handle, primitive));
-            }
-        }
+        // Insert the collider to the body set.
+        colliders.insert(ball_collider);
+        let primitive = Primitive::new(ball::draw);
+        world.push((rigid_body_handle, primitive));
 
         let source = character::source();
         let clip = source.get_clip(character::CharacterState::IdleLeft, 0);

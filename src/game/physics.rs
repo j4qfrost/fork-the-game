@@ -9,7 +9,7 @@ pub const GRAVITY: f32 = -9.81;
 
 // Will contain all the physics simulation state
 pub struct Physics {
-    geometrical_world: DefaultGeometricalWorld<f32>,
+    pub geometrical_world: DefaultGeometricalWorld<f32>,
     mechanical_world: DefaultMechanicalWorld<f32>,
     pub joint_constraints: DefaultJointConstraintSet<f32>,
     pub force_generators: DefaultForceGeneratorSet<f32>,

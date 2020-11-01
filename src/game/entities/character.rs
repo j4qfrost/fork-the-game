@@ -1,13 +1,11 @@
 use super::super::components::animate::*;
 use super::super::components::sprite::*;
-use image::GenericImageView;
 use nphysics2d::math::{Isometry, Velocity};
 use nphysics2d::object::{DefaultBodyHandle, DefaultBodySet};
 use num_traits::{AsPrimitive, FromPrimitive};
 use skulpin::skia_safe::{colors, Canvas, Paint, Rect as SkiaRect};
 use skulpin::winit::event::ElementState;
 use skulpin::winit::event::VirtualKeyCode as Keycode;
-use std::collections::HashMap;
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Hash)]
 pub enum CharacterState {

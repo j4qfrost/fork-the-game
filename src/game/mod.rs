@@ -7,11 +7,11 @@ use level::*;
 use skulpin::winit::event::VirtualKeyCode as Keycode;
 use systems::DeltaTime;
 // use super::deno::Deno;
-use super::python::Python;
 pub mod components;
 pub mod entities;
 use components::animate::Animate;
 use components::input::KeyInputHandler;
+use components::script;
 use skulpin::winit::event::ElementState;
 
 pub struct Game {
@@ -19,7 +19,6 @@ pub struct Game {
     pub schedule: Schedule,
     pub resources: Resources,
     pub nsteps: usize,
-    pub python: Python,
 }
 
 impl Default for Game {
@@ -35,8 +34,10 @@ impl Default for Game {
         let physics = Physics::new(&mut resources);
         resources.insert(physics);
 
-        let mut python = Python::default();
-        python.init();
+        // let mut python = Python::default();
+        // python.init();
+
+        script::inject_resource_dependencies(&mut resources);
 
         let level = Level::new();
         level.init(&mut world, &mut resources);
@@ -46,7 +47,6 @@ impl Default for Game {
             schedule,
             resources,
             nsteps: 3,
-            python,
         }
     }
 }
